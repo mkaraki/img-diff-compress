@@ -5,6 +5,40 @@ import cv2
 
 import img_diff
 
+
+class DistanceCalculator:
+
+    @staticmethod
+    def calculate(img_list):
+        """
+        Calculate distance between images in img_list
+        Small distance means similar images
+        """
+
+        distance_score = {}
+
+        for i in range(len(img_list)):
+            img_a = img_list[i][1]
+            sum_distance = 0
+
+            for j in range(len(img_list)):
+                if i == j:
+                    continue
+
+                img_b = img_list[j][1]
+
+                imgDiff = img_diff.ImgDiff(img_a, img_b)
+                distance = imgDiff.get_diff_distance()
+
+                sum_distance += distance
+
+            distance_score[img_list[i][0]] = {
+                'sum_distance': sum_distance,
+            }
+
+        return distance_score
+
+
 if __name__ == '__main__':
     imgs = [ 'test_imgs/a/002.jpg', 'test_imgs/a/003.jpg', 'test_imgs/a/004.jpg', 'test_imgs/a/005.jpg',
                   'test_imgs/a/006.jpg', 'test_imgs/a/007.jpg', 'test_imgs/a/008.jpg']
