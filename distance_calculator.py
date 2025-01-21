@@ -9,7 +9,7 @@ import img_diff
 class DistanceCalculator:
 
     @staticmethod
-    def calculate(img_list):
+    def calculate(img_list, target_idx=1):
         """
         Calculate distance between images in img_list
         Small distance means similar images
@@ -18,14 +18,14 @@ class DistanceCalculator:
         distance_score = {}
 
         for i in range(len(img_list)):
-            img_a = img_list[i][1]
+            img_a = img_list[i][target_idx]
             sum_distance = 0
 
             for j in range(len(img_list)):
                 if i == j:
                     continue
 
-                img_b = img_list[j][1]
+                img_b = img_list[j][target_idx]
 
                 imgDiff = img_diff.ImgDiff(img_a, img_b)
                 distance = imgDiff.get_diff_distance()
