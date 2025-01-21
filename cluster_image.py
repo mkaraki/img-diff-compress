@@ -12,10 +12,19 @@ class ImageClassifier:
     def classify_with_auto_clustering(img_list, full_distance_scan=False):
         target_idx = 2 if full_distance_scan else 1
 
-        if len(img_list) <= 1: # 1 or 0 images can not be classified
-            return { 0: img_list }
+        img_num = max_cluster_size = len(img_list)
 
-        max_cluster_size = len(img_list)
+        if img_num <= 1: # 1 or 0 images can not be classified
+            return { 0: img_list }
+        elif img_num == 2: # 2 images can be more simple to auto (manual) classify
+            simple_distance = (img_list[0][target_idx].shape[0] * img_list[0][target_idx].shape[1]) * 2
+            complex_distance = DistanceCalculator.calculate_two_image_distance(img_list[0], img_list[1], target_idx)
+            if complex_distance < simple_distance:
+                return { 0: img_list }
+            else:
+                return { 0: [img_list[0]], 1: [img_list[1]] }
+
+
 
         best_distance_sum = sys.maxsize
         best_classified_result = None

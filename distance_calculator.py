@@ -9,6 +9,22 @@ import img_diff
 class DistanceCalculator:
 
     @staticmethod
+    def calculate_two_image_distance(img_a_tuple, img_b_tuple, target_idx=1):
+        """
+        Calculate distance between two images
+        Small distance means similar images
+        """
+
+        img_a = img_a_tuple[target_idx]
+        img_b = img_b_tuple[target_idx]
+
+        imgDiff = img_diff.ImgDiff(img_a, img_b)
+        distance = imgDiff.get_diff_distance()
+
+        return distance
+
+
+    @staticmethod
     def calculate(img_list, target_idx=1):
         """
         Calculate distance between images in img_list
@@ -18,18 +34,15 @@ class DistanceCalculator:
         distance_score = {}
 
         for i in range(len(img_list)):
-            img_a = img_list[i][target_idx]
+            img_a = img_list[i]
             sum_distance = 0
 
             for j in range(len(img_list)):
                 if i == j:
                     continue
 
-                img_b = img_list[j][target_idx]
-
-                imgDiff = img_diff.ImgDiff(img_a, img_b)
-                distance = imgDiff.get_diff_distance()
-
+                img_b = img_list[j]
+                distance = DistanceCalculator.calculate_two_image_distance(img_a, img_b, target_idx)
                 sum_distance += distance
 
             distance_score[img_list[i][0]] = {
