@@ -10,10 +10,10 @@ class ImageClassifier:
 
     @staticmethod
     def classify_with_auto_clustering(img_list, full_distance_scan=False):
-        if len(img_list) <= 1:
-            return { 0: img_list }
-
         target_idx = 2 if full_distance_scan else 1
+
+        if len(img_list) <= 1: # 1 or 0 images can not be classified
+            return { 0: img_list }
 
         max_cluster_size = len(img_list)
 
@@ -21,21 +21,21 @@ class ImageClassifier:
         best_classified_result = None
 
         for cluster_size in range(1, max_cluster_size + 1):
-            if cluster_size == 1:
+            if cluster_size == 1: # 1 cluster is not classified. Skip heavy calculation
                 classified_images = { 0: img_list }
             else:
                 classified_images = ImageClassifier.classify(img_list, cluster_size)
 
             total_distance = 0
             for cls, item in classified_images.items():
-                if len(item) == 1:
-                    total_distance += item[0][target_idx].shape[0] * item[0][target_idx].shape[1]
+                if len(item) == 1: # 1 image can not determine distance. Take full size as distance
+                    distance = item[0][target_idx].shape[0] * item[0][target_idx].shape[1]
+                    total_distance += distance
                     continue
 
                 distance_score = DistanceCalculator.calculate(item, target_idx=target_idx)
-                min_distance_idx = min(distance_score, key=lambda x: distance_score[x]['sum_distance'])
-                total_distance += distance_score[min_distance_idx]['sum_distance']
-                print(f'n: {cluster_size} Cluster: {cls}, Total distance: {total_distance}')
+                distance = min(distance_score.values(), key=lambda x: x['sum_distance'])['sum_distance']
+                total_distance += distance
 
             if total_distance < best_distance_sum:
                 best_distance_sum = total_distance
